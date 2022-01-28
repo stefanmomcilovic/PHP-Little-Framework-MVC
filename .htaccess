@@ -1,0 +1,21 @@
+Options +FollowSymLinks -MultiViews
+# Turn mod_rewrite on
+RewriteEngine On
+RewriteBase /
+
+# To externally redirect /dir/foo.php to /dir/foo
+RewriteCond %{REQUEST_METHOD} !POST
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
+RewriteRule ^ %1 [R=302,L,NE]
+
+## To internally redirect /dir/foo to /dir/foo.php
+RewriteCond %{REQUEST_FILENAME}.php -f [NC]
+RewriteRule ^ %{REQUEST_URI}.php [L]
+
+## Root in public folder ##
+RewriteCond %{REQUEST_URI} !^/public
+RewriteRule ^(.*)$ /public/$1 [L]
+
+## Remove /?page= if it's empty ##
+RewriteCond %{QUERY_STRING} ^page=[^&]+&?(.*) [NC]
+RewriteRule ^ %{REQUEST_URI}?%1 [R=302,L]
